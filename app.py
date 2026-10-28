@@ -13,6 +13,14 @@ TAGLINE = "Be the all rounder"
 GITHUB = "https://github.com/Markshed-Potato"
 PHOTO_FILE = Path(__file__).parent / "Racho_Picture.jpg"
 
+ICONS = {
+    "person": '<circle cx="12" cy="8" r="3.5"/><path d="M5 21v-2a7 7 0 0 1 14 0v2"/>',
+    "location": '<path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/>',
+    "education": '<path d="m2 9 10-5 10 5-10 5L2 9Z"/><path d="M6 11v5c3.5 2.7 8.5 2.7 12 0v-5M22 9v6"/>',
+    "target": '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',
+    "mail": '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
+}
+
 BIO = "I am an outgoing and adventurous person, even in tech."
 BACKGROUND = "I grew up in Zamboanga City and entered university at CIT-U."
 EDUCATION = ("I was a top student from kindergarten to Senior High School, "
@@ -35,13 +43,22 @@ PROJECTS = [
     {"title": "Evacusafe", "role": "Solo project", "year": 2026, "type": "Solo", "team": "Solo"},
     {"title": "AgriLink", "role": "Solo project", "year": 2025, "type": "Solo", "team": "Solo"},
 ]
+
+def icon(name, size=18):
+    return (f'<svg class="icon" width="{size}" height="{size}" viewBox="0 0 24 24" '
+            f'fill="none" stroke="currentColor" stroke-width="1.8" '
+            f'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+            f'{ICONS[name]}</svg>')
+
 # =========================================================
 
-st.set_page_config(page_title=f"{NAME} | Portfolio", page_icon="🎮", layout="wide")
+st.set_page_config(page_title=f"{NAME} | Portfolio", page_icon=str(PHOTO_FILE), layout="wide")
 st.markdown("""
 <style>
 .hero{padding:1.6rem 2rem;border-radius:18px;background:linear-gradient(135deg,#6C5CE7,#00CEC9);color:white;margin-bottom:1rem}
-.hero h1{margin:0;font-size:2.6rem}.hero p{margin:.3rem 0 0}
+.hero h1{display:flex;align-items:center;gap:.65rem;margin:0;font-size:2.6rem}.hero p{margin:.3rem 0 0}
+.icon-label{display:flex;align-items:center;gap:.55rem;margin:.5rem 0}
+.icon{flex:none}
 </style>""", unsafe_allow_html=True)
 
 st.session_state.setdefault("likes", 0)
@@ -59,28 +76,30 @@ skills_df = pd.DataFrame({"Skill": list(SKILLS), "Level": list(SKILLS.values())}
 with st.sidebar:
     photo(width=160)
     st.header(NAME)
-    st.caption(f"{PROGRAM} · {SECTION}\n\n📍 {CITY}")
+    st.caption(f"{PROGRAM} · {SECTION}")
+    st.markdown(f'<div class="icon-label">{icon("location")}<span>{CITY}</span></div>',
+                unsafe_allow_html=True)
     st.divider()
     st.subheader("Customize view")
     show_chart = st.checkbox("Show skills chart", True)
     chart_type = st.radio("Chart type", ["Bar", "Line", "Area"], horizontal=True)
     min_level = st.slider("Minimum skill level", 0, 100, 0, 5)
     st.divider()
-    if st.button("👍 Like this portfolio"):
+    if st.button("Like this portfolio", icon=":material/favorite:"):
         st.session_state.likes += 1
-        st.toast("Thanks!", icon="💜")
+        st.toast("Thanks!", icon=":material/favorite:")
     st.metric("Likes", st.session_state.likes)
     st.link_button("GitHub", GITHUB)
 
 # ---------- Hero ----------
-st.markdown(f"""<div class="hero"><h1>👋 {NAME}</h1>
+st.markdown(f"""<div class="hero"><h1>{icon("person", 32)} {NAME}</h1>
 <p>{TAGLINE}</p><p><b>{PROGRAM} · {SECTION}</b></p></div>""", unsafe_allow_html=True)
 c1, c2, c3 = st.columns(3)
 c1.metric("Projects", len(PROJECTS))
 c2.metric("Solo projects", sum(p["team"] == "Solo" for p in PROJECTS))
 c3.metric("Skills", len(SKILLS))
 
-tabs = st.tabs(["🙋 About", "📖 Autobiography", "🛠️ Skills", "💼 Projects", "✉️ Contact"])
+tabs = st.tabs(["About", "Autobiography", "Skills", "Projects", "Contact"])
 
 # ---------- About ----------
 with tabs[0]:
@@ -90,7 +109,12 @@ with tabs[0]:
     with b:
         st.header("About me")
         st.write(BIO)
-        st.markdown(f"- 🎓 {PROGRAM}, CIT-U\n- 📍 {CITY}\n- 🎯 {TAGLINE}")
+        st.markdown(
+            f'<div class="icon-label">{icon("education")}<span>{PROGRAM}, CIT-U</span></div>'
+            f'<div class="icon-label">{icon("location")}<span>{CITY}</span></div>'
+            f'<div class="icon-label">{icon("target")}<span>{TAGLINE}</span></div>',
+            unsafe_allow_html=True,
+        )
         with st.expander("Interests"):
             st.write(INTERESTS)
         st.info("Open to collaborations!")
@@ -158,7 +182,7 @@ with tabs[4]:
             e = st.text_input("Your email")
             topic = st.selectbox("Topic", ["Feedback", "Collaboration", "Just saying hi"])
             msg = st.text_area("Message", height=120)
-            mood = st.radio("How was the site?", ["😍 Loved it", "🙂 Good", "😐 Okay"], horizontal=True)
+            mood = st.radio("How was the site?", ["Loved it", "Good", "Okay"], horizontal=True)
             ok = st.checkbox("I agree to be contacted back")
             sent = st.form_submit_button("Send", type="primary")
         if sent:
@@ -171,7 +195,11 @@ with tabs[4]:
                 st.success(f"Thanks, {n}!")
                 st.balloons()
     with y:
-        st.markdown(f"**📧** {EMAIL}\n\n**📍** {CITY}")
+        st.markdown(
+            f'<div class="icon-label">{icon("mail")}<span>{EMAIL}</span></div>'
+            f'<div class="icon-label">{icon("location")}<span>{CITY}</span></div>',
+            unsafe_allow_html=True,
+        )
         st.map(pd.DataFrame({"lat": [6.9214], "lon": [122.0790]}), zoom=10)
         if st.session_state.messages:
             st.caption(f"Messages this session: {len(st.session_state.messages)}")
@@ -180,4 +208,5 @@ st.divider()
 buf = io.StringIO(); skills_df.to_csv(buf, index=False)
 f1, f2 = st.columns([3, 1])
 f1.caption(f"© 2026 {NAME} · {SECTION} · Built with Streamlit")
-f2.download_button("⬇️ Skills CSV", buf.getvalue(), "skills.csv", "text/csv")
+f2.download_button("Skills CSV", buf.getvalue(), "skills.csv", "text/csv",
+                   icon=":material/download:")
