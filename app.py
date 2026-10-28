@@ -9,7 +9,7 @@ SECTION = "CS365"
 PROGRAM = "BSCS-3"
 EMAIL = "s.wilmarkracho@gmail.com"
 CITY = "Zamboanga"
-TAGLINE = "Be the all rounder"
+TAGLINE = "Striving to be an all-rounder"
 GITHUB = "https://github.com/Markshed-Potato"
 PHOTO_FILE = Path(__file__).parent / "Racho_Picture.jpg"
 
@@ -21,20 +21,20 @@ ICONS = {
     "mail": '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
 }
 
-BIO = "I am an outgoing and adventurous person, even in tech."
-BACKGROUND = "I grew up in Zamboanga City and entered university at CIT-U."
-EDUCATION = ("I was a top student from kindergarten to Senior High School, "
-             "then got humbled when I stepped into college.")
-INTERESTS = "Anything that gives me energy."
+BIO = "I am outgoing and adventurous, even in the world of technology."
+BACKGROUND = "I grew up in Zamboanga City and later enrolled at CIT-U."
+EDUCATION = ("I was a top student from kindergarten through senior high school, "
+             "but college soon humbled me.")
+INTERESTS = "I enjoy anything that gives me energy."
 
 SKILLS = {"SQL": 60, "SFX": 70, "Python": 80, "C#": 75}
 
 MILESTONES = [
     (None, "Grew up in Zamboanga City"),
-    (None, "Top of my class from kindergarten to SHS"),
-    (None, "Entered CIT-U for BSCS"),
-    (2025, "Built Lost and Found and AgriLink (solo)"),
-    (2026, "Built Evacusafe (solo) and joined Game Jam 2026 as SFX/VFX"),
+    (None, "Ranked at the top of my class from kindergarten through senior high school"),
+    (None, "Enrolled in the BSCS program at CIT-U"),
+    (2025, "Built Lost and Found and AgriLink as solo projects"),
+    (2026, "Built Evacusafe as a solo project and joined Game Jam 2026 as an SFX/VFX artist"),
 ]
 
 PROJECTS = [
@@ -68,7 +68,7 @@ def photo(**kw):
     if PHOTO_FILE.exists():
         st.image(str(PHOTO_FILE), caption=NAME, **kw)
     else:
-        st.warning(f"Put {PHOTO_FILE.name} in the same folder as app.py")
+        st.warning(f"Place {PHOTO_FILE.name} in the same folder as app.py.")
 
 skills_df = pd.DataFrame({"Skill": list(SKILLS), "Level": list(SKILLS.values())})
 
@@ -80,14 +80,14 @@ with st.sidebar:
     st.markdown(f'<div class="icon-label">{icon("location")}<span>{CITY}</span></div>',
                 unsafe_allow_html=True)
     st.divider()
-    st.subheader("Customize view")
+    st.subheader("Customize your view")
     show_chart = st.checkbox("Show skills chart", True)
     chart_type = st.radio("Chart type", ["Bar", "Line", "Area"], horizontal=True)
     min_level = st.slider("Minimum skill level", 0, 100, 0, 5)
     st.divider()
     if st.button("Like this portfolio", icon=":material/favorite:"):
         st.session_state.likes += 1
-        st.toast("Thanks!", icon=":material/favorite:")
+        st.toast("Thank you!", icon=":material/favorite:")
     st.metric("Likes", st.session_state.likes)
     st.link_button("GitHub", GITHUB)
 
@@ -117,7 +117,7 @@ with tabs[0]:
         )
         with st.expander("Interests"):
             st.write(INTERESTS)
-        st.info("Open to collaborations!")
+        st.info("I'm open to collaboration!")
 
 # ---------- Autobiography ----------
 with tabs[1]:
@@ -135,7 +135,7 @@ with tabs[1]:
     ms = pd.DataFrame(MILESTONES, columns=["Year", "Milestone"]).fillna("—")
     ms["Year"] = ms["Year"].astype(str).str.replace(".0", "", regex=False)
     st.dataframe(ms, hide_index=True, use_container_width=True)
-    pick = st.select_slider("Scrub through my story", options=list(range(len(MILESTONES))),
+    pick = st.select_slider("Explore my story", options=list(range(len(MILESTONES))),
                             format_func=lambda i: f"Step {i+1}")
     st.success(MILESTONES[pick][1])
 
@@ -150,7 +150,7 @@ with tabs[2]:
                      column_config={"Level": st.column_config.ProgressColumn("Level", min_value=0, max_value=100, format="%d%%")})
     with s2:
         if f.empty:
-            st.warning("No skills match the filter.")
+            st.warning("No skills match your selected filter.")
         elif show_chart:
             {"Bar": st.bar_chart, "Line": st.line_chart, "Area": st.area_chart}[chart_type](f.set_index("Skill")["Level"])
 
@@ -168,8 +168,8 @@ with tabs[3]:
             st.subheader(p["title"])
             st.caption(f"{p['year']} · {p['type']}")
             st.write(f"**Role:** {p['role']}")
-            st.link_button("See my GitHub", GITHUB, key=f"gh{i}")
-    st.subheader("Rate my work")
+            st.link_button("View on GitHub", GITHUB, key=f"gh{i}")
+    st.subheader("Rate my projects")
     st.feedback("stars")
 
 # ---------- Contact ----------
@@ -180,14 +180,14 @@ with tabs[4]:
         with st.form("contact", clear_on_submit=True):
             n = st.text_input("Your name")
             e = st.text_input("Your email")
-            topic = st.selectbox("Topic", ["Feedback", "Collaboration", "Just saying hi"])
+            topic = st.selectbox("Topic", ["Feedback", "Collaboration", "Just saying hello"])
             msg = st.text_area("Message", height=120)
             mood = st.radio("How was the site?", ["Loved it", "Good", "Okay"], horizontal=True)
-            ok = st.checkbox("I agree to be contacted back")
+            ok = st.checkbox("I agree to be contacted.")
             sent = st.form_submit_button("Send", type="primary")
         if sent:
             if not (n and e and msg):
-                st.error("Fill in name, email, and message.")
+                st.error("Please enter your name, email address, and message.")
             else:
                 with st.spinner("Sending..."):
                     time.sleep(1)
@@ -207,6 +207,6 @@ with tabs[4]:
 st.divider()
 buf = io.StringIO(); skills_df.to_csv(buf, index=False)
 f1, f2 = st.columns([3, 1])
-f1.caption(f"© 2026 {NAME} · {SECTION} · Built with Streamlit")
+f1.caption(f"© 2026 {NAME} · {SECTION} · Created with Streamlit")
 f2.download_button("Skills CSV", buf.getvalue(), "skills.csv", "text/csv",
                    icon=":material/download:")
